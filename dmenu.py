@@ -7,33 +7,60 @@ import StringIO
 root = tk.Tk()
 root.withdraw()
 
+class category:
+    # What user has selected
+    sellist = []
+
+    def __init__(self, name, prev, next, autonext = 'next'):
+        self.name = name
+        self.prev = prev
+        self.next = next   # Which menu is next
+        self.autonext = autonext   #If 'sel' then next menu is vtag, else go to next menu
+        self.tags = {}   # Dictionary. Format: vtag, atag. "vtag" is what the user sees in the menu (v means visual), and "atag" is what actually gets output. The "tag" can include codes to trigger additional functions.
+        self.onlyonce = 0   # Set to true if the menu is to be accessed only once. 
+
 #########################
 # Set these parameters. #
 #########################
 
-# Folder with your category lists.
+# Folder with your category lists. (Must not have trailing /) Files must have .tag extension.
 tagdir = "/home/kanon/Dropbox/gthumb-tagger"
 
-# Program will look in tagdir folder for catlist items with the .tag extension. catlist holds your category lists.
-catlist = [
-    'media',
-    'imgchar',
-    'parts',
-    'partchar',
-    'bodypos',
-    'fempos',
-    'mascpos',
-    'common',
-    'scene',
-    'sexpos',
-    'var',
-    '1act',
-    '2act',
-    'actchar'
-]
+# Names of your categories. Make a file with this name and .tag for the extension, and put in your keywords (tags). Format: one keyword per line. First thing on the line is the "vtag", meaning the tag that will appear in the menu. Follow it by a comma, and then put the "atag", which is the actual tag. If there is no comma and atag, then vtag will be used.
+#catlist = [
+#    'media',
+#    'imgchar',
+#    'parts',
+#    'partchar',
+#    'bodypos',
+#    'fempos',
+#    'malepos',
+#    'common',
+#    'scene',
+#    'sexpos',
+#    'var',
+#    '1act',
+#    '2act',
+#    'actchar'
+#]
 
-# Menus (categories) to show only once, i.e. forward and back (& and *) skip them the second time around.
-onlyonce = ['media', 'parts']
+categories = {}
+
+categories['media'] = category('media', 'common', 'imgchar')
+categories['imgchar'] = category('imgchar', 'common', 'parts')
+categories['parts'] = category('parts', 'imgchar', 'partchar')
+categories['partchar'] = category('partchar', 'common', 'fempos_onlyonce')
+categories['fempos_onlyonce'] = category('fempos_onlyonce', 'common', 'bodypos')
+categories['bodypos'] = category('bodypos', 'partchar', 'common', 'sel')
+categories['fempos'] = category('fempos', 'partchar', 'common')
+categories['malepos'] = category('malepos', 'partchar', 'common')
+categories['common'] = category('common', 'bodypos', 'common', 'sel')
+categories['scene'] = category('scene', 'common', 'common')
+categories['sexpos'] = category('sexpos', 'common', 'common')
+categories['var'] = category('var', 'common', 'common')
+categories['1act'] = category('1act', 'common', 'common')
+categories['2act'] = category('2act', 'common', 'common')
+categories['actchar'] = category('actchar', 'common', 'common')
 
 # Which category program begins with.
 startcategory = 'media'
@@ -42,7 +69,6 @@ startcategory = 'media'
 # GLOBAL VARS #
 ###############
 
-sellist = []      # What user has selected
 #sourcelist = []   # For holding all tags in a categoryDELME
 #finalTags = ""    # DELMEsellist when done, converted to comma-delimited string
 #sel = ""          # DELMEselection returned by dmenu
@@ -50,6 +76,21 @@ sellist = []      # What user has selected
 ####################
 # FUNCTION SECTION #
 ####################
+
+# Read category files and fill (dictionary) categories with all category lists.
+def fillcats():
+    for cat in categories.values():
+        with open('{0}/{1}.tag'.format(tagdir, cat.name), 'r') as f:
+            for line in f:
+                pline = line.rpartition(',')
+                if (pline[0] == '' and pline[1] == ''):
+                    atag = vtag = pline[2]
+                else: 
+                    vtag = pline[0]
+                    atag = pline[2]
+
+                cat.tags[vtag] = atag
+    return
 
 # Paste selected tags string, and quit.
 def pasteDone():
@@ -66,11 +107,11 @@ def showMenu(category):
     global sellist
 
     # Construct alltags, a string containing all tags in this category, except ones already in sellist
-    if (category == 'bodypos') 
+    if (category == 'bodypos') :
         alltags = "female\nmale\n&\n$\n"
-    else
+    else:
         alltags = "*\n" # Start list with a *
-        f = open('{0}/{1}.tag'.format(, jcategory), 'r')
+        #f = open('{0}/{1}.tag'.format(, jcategory), 'r')
         alltags += f.read()
         if(len(sellist) > 0):
             for already in sellist: 
@@ -268,6 +309,10 @@ def getActChar():
 # THE MAIN CODE #
 #################
 
+fillcats()
+print categories
+exit
+
 # Keep serving up menus until done.
 options = {
     'media' : getMedia,
@@ -286,7 +331,7 @@ options = {
     'actchar' : getActChar
 }
 
-options[next]()
+#options[next]()
 
 getMedia()
 
