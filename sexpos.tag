@@ -1,3 +1,4 @@
+*,*next
 cowgirl
 doggy
 missionary 
@@ -6,3 +7,5 @@ piledriver
 face-sitting
 sandwich
 69
+&,*prev
+$,*done

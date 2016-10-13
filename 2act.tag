@@ -1,3 +1,4 @@
+*,*next
 bouncing boobs
 cumshot 
 facial
@@ -28,3 +29,5 @@ massage
 pee
 sleeping
 pinch 
+&,*prev
+$,*done

@@ -1,29 +1,34 @@
-# TODO: 
-# * Import existing tags from gthumb
-# * Get back to image characters
-# * Get rid of bodypos and just have fempos and malepos
-# * Menus have titles, especially useful for fempos
-# 
 from subprocess import Popen, PIPE, STDOUT
-import Tkinter as tk
-import tkMessageBox
-import sys
-import StringIO
 
-root = tk.Tk()
-root.withdraw()
+keyboard.send_keys("t")
+if (window.wait_for_focus('.*Tags', 1)):
+  #  time.sleep(.5)
+    window.resize_move(':ACTIVE:', xOrigin=900)
+else:
+    dialog.info_dialog("Error", "Could not focus Tags window")
+#winID = window.get_window_id()
+#winPos = window.get_position()
+#window.move(11,11)
+#winClass = window.get_active_class()
+#keyboard.send_keys(winPos)
+#keyboard.send_keys("<ctrl>+j")
+#keyboard.send_keys("m<right>")
+#m<right><right><right><right><right><right><right><right><right><right><right><right>")
 
 class category:
     # What user has selected
     sellist = []
 
-    def __init__(self, name, prev, next, selnext = False):
+    def __init__(self, name, prev, next, title = '', selnext = False):
         self.name = name
+        self.title = title
         self.prev = prev
         self.next = next   # Which menu is next
         self.selnext = selnext   #If True, then next menu is vtag, else go to next menu
         self.tags = []   # List of all tags in this category. Each item in self.tags is a pair (also a list): vtag and atag. "vtag" is what the user sees in the menu (v means visual), and "atag" is what actually gets output. The "tag" can include codes to trigger additional functions.
         self.onlyonce = False   # Set to true if the menu is to be accessed only once. 
+
+tagwin = ''   # The tag window's title
 
 #########################
 # Set these parameters. #
@@ -54,14 +59,6 @@ categories['actchar'] = category('actchar', 'common', 'common')
 # Which category program begins with.
 startcategory = 'media'
 
-###############
-# GLOBAL VARS #
-###############
-
-#sourcelist = []   # For holding all tags in a categoryDELME
-#finalTags = ""    # DELMEsellist when done, converted to comma-delimited string
-#sel = ""          # DELMEselection returned by dmenu
-
 ####################
 # FUNCTION SECTION #
 ####################
@@ -84,8 +81,20 @@ def fillcats():
 # Paste selected tags string, and quit.
 def pasteDone():
     finalTags = ", ".join(category.sellist)
-    tkMessageBox.showwarning("Your title", "tags: "+finalTags)
-    #dialog.info_dialog("Window information", "'%s'" % finalTags)
+    
+    #clipboard.fill_clipboard(finalTags)   # Just in case this all fails, the tags can be manually pasted in
+
+    if (window.wait_for_focus(tagwin, 1)):
+        dialog.info_dialog("got focus", "'%s'" % tagwin)
+        keyboard.send_keys(finalTags)
+        exit(0)
+    elif (window.activate(tagwin)):
+        dialog.info_dialog("act", "'%s'" % tagwin)
+        keyboard.send_keys(finalTags)
+        exit(0)
+    else:
+        dialog.info_dialog("Tag Paste Failed", "'%s'" % finalTags)
+    
     exit(0)
 
 def showMenu(catname):
@@ -139,8 +148,8 @@ def showMenu(catname):
 # THE MAIN CODE #
 #################
 
+tagwin = window.get_active_title()
 fillcats()
 menu = startcategory
 while True:
     menu = showMenu(menu)
-

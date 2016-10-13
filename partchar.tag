@@ -1,3 +1,4 @@
+*,*next
 asian
 african
 latin
@@ -13,5 +14,8 @@ bush
 shaved 
 tattoo
 piercings
+long tongue
 :
 big cock
+&,*prev
+$,*done

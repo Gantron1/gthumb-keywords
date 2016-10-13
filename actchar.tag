@@ -1,3 +1,4 @@
+*,*next
 ass
 balls 
 boobs
@@ -10,6 +11,7 @@ interesting
 oil
 pullout 
 romantic
+eye contact
 rich
 saliva
 squirt
@@ -26,3 +28,5 @@ teasing
 dildo
 strapon 
 vibe 
+&,*prev
+$,*done

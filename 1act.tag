@@ -1,3 +1,4 @@
+*,*next
 blowjob 
 deepthroat
 cunni
@@ -16,3 +17,5 @@ male non-penetration
 sandwich
 teabag
 selfie
+&,*prev
+$,*done
